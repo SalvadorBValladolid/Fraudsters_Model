@@ -1,0 +1,314 @@
+---
+title: "Consumer Package Goods"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows  #change this to "rows"
+    vertical_layout: scroll
+    theme: readable
+    logo: "/home/salvador/Pictures/rappi_Logo_v3.png"
+---
+
+<style>                     
+.navbar, [data-toggle=tab], .navbar-brand  {   background-color:white;   border-color:#00704a;   color:white; }
+</style> 
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+setwd("/home/salvador/Documents/Rappi_MX/fernandopaulin-rpmx_ds_challenge-9c6f6f0dd29e")
+#train_challenge<- read.csv("train_challenge.csv")
+
+
+
+```
+
+EDA {data-icon="glyphicon-shopping-cart"}
+=============================
+
+Row
+-----------------------------------------------------------------------
+
+### 
+
+```{r}
+
+valueBox("Fraudsters vs Good Users",color="#FC9186")
+```
+
+
+Row
+-----------------------------------------------------------------------
+
+### Amount
+
+```{r}
+
+knitr::include_graphics("monto.png")
+```
+
+### TXN
+
+```{r}
+
+knitr::include_graphics("TXN.png")
+```
+
+Row
+-----------------------------------------------------------------------
+
+### Credit Line
+
+```{r}
+
+knitr::include_graphics("linea_tc.png")
+```
+
+Row
+-----------------------------------------------------------------------
+
+### Cashback
+
+```{r}
+
+knitr::include_graphics("cashback.png")
+```
+
+Row
+-----------------------------------------------------------------------
+
+### Discount
+
+```{r}
+
+knitr::include_graphics("dcto.png")
+```
+
+Row
+-----------------------------------------------------------------------
+
+### 
+
+```{r}
+
+valueBox("Analysis",color="#FC9186")
+
+```
+
+
+Row
+-----------------------------------------------------------------------
+
+### 
+
+The fraudsters Users tend to have a higher transactionality than Good Users, in fact they transactions are with larger amount. As cashback and discount are related to TXN, they behave the same. These are important insights and will be useful in Feature Engineering Phase.
+
+
+Row
+-----------------------------------------------------------------------
+
+### Establishment
+
+```{r}
+
+knitr::include_graphics("EStablishment.png")
+```
+
+Customers Segment {data-icon="glyphicon-shopping-cart"}
+=============================
+
+Row
+-----------------------------------------------------------------------
+
+### 
+
+```{r}
+
+valueBox("Feature Engineering",color="#FC9186")
+
+```
+
+Row
+-----------------------------------------------------------------------
+
+### Variables
+
+In order to segment the customers, I created the following variables:
+
+1. Approved TXN: The sum of approved TXN for each customer.
+
+2. Declined TXN: The sum of declined TXN for each customer.
+
+3. In process TXN: The sum of in process TXN for each customer.
+
+4. Establishment: One Hot Encoder of the Establishment Variable (Abarrotes,Farmacia,MPago,Desconocido,Restaurante, Super). This is the establishment with more TXN for each customer.
+
+5. Credit Card Type: Dummie variables Virtual or Physical Credit Card. Does the customer transacts more with Virtual or Physical Credit Card?
+
+6. Credit Line
+
+Row
+-----------------------------------------------------------------------
+
+### 
+
+```{r}
+
+valueBox("Metodology",color="#FC9186")
+
+```
+
+Row
+-----------------------------------------------------------------------
+
+### 
+
+I use the Elbow Method to find the best number of clusters. But I excluded the Fraudsters, since I put them in a Cluster.
+
+Row
+-----------------------------------------------------------------------
+
+### Establishment
+
+```{r}
+
+knitr::include_graphics("Elbow_Method.png")
+```
+
+Row
+-----------------------------------------------------------------------
+
+### 
+
+```{r}
+
+valueBox("Segment Description",color="#FC9186")
+
+```
+
+Row
+-----------------------------------------------------------------------
+
+### 
+1) Fraudster User: They Transact a lot with a large amount. 
+In fact they:
+1. +103% Approved and Declined TXN than the others
+2. -1.73% Credit Line than the others
+3. Universe: 675
+
+Row
+-----------------------------------------------------------------------
+
+### 
+
+2) Heavy User: 
+1. +67% Approved TXN than Medium Users
+2. +82% Amount of Approved TXN than Medium Users
+3. All of them transact with physical Credit Card
+4. Universe: 1,750
+
+Row
+-----------------------------------------------------------------------
+
+### 
+
+3) Medium User: 
+1. -40% Approved TXN than Heavy Users
+2. -40% Amount of Approved TXN than Heavy Users
+3. All of them transact with physical Credit Card
+4. Universe: 1,151
+
+Row
+-----------------------------------------------------------------------
+
+### 
+
+4) Medium Digital User:
+1. -48% Approved TXN than Heavy Users
+2. -49% Amount of Approved TXN than Heavy Users
+3. All of them transact with Digital Credit Card
+4. Universe: 424
+
+Model {data-icon="glyphicon-shopping-cart"}
+=============================
+
+Row
+-----------------------------------------------------------------------
+
+### 
+
+```{r}
+
+valueBox("Imbalanced Dataset",color="#FC9186")
+
+```
+
+Row
+-----------------------------------------------------------------------
+
+### Imbalanced dataset
+The dataset is unbalanced, so I needed to apply a technique in order to balance it. I used Synthetic Minority Oversampling Technique (SMOTE), which synthetic data for the minority class.
+
+Row
+-----------------------------------------------------------------------
+
+### 
+
+```{r}
+
+valueBox("XGB Model-Performance",color="#FC9186")
+
+```
+
+Row
+-----------------------------------------------------------------------
+
+### 
+
+```{r}
+
+knitr::include_graphics("Metrics.png")
+```
+
+### 
+
+We have a decent Accuracy in Testing Data. Let's contemplate the following:
+
+1. The model has better Fraudsters-Precision, so we have more certainty identifying Fraudsters, but lower Fraudsters-Recall, then some Fraudsters go unnoticed.
+
+2. The model has better Good Users-Recall, so we have more certainty identifying all Good Users, but lower Good Users-Precision, then some Fraudsters go unnoticed.
+
+3. Some Fraudsters go unnoticed
+
+Row
+-----------------------------------------------------------------------
+
+### 
+
+```{r}
+
+valueBox("Feature Importance",color="#FC9186")
+
+```
+
+
+Row
+-----------------------------------------------------------------------
+
+### 
+
+```{r}
+
+knitr::include_graphics("Feature_Importance.png")
+```
+
+
+Row
+-----------------------------------------------------------------------
+
+### 
+
+1. Fraudsters tend to have more TXN than Good Users.
+
+2. Fraudsters have lower Credit Line
+
+3. Fraudsters tend to transact more often in Unkown Establishments.
+
